@@ -9,35 +9,22 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 
-/**
- * Created by Idea 14 whih "netty"
- *
- * @Auhor: karl.zhao
- * @Email: karl.zhao@qq.com
- * @Date: 2015-11-28
- * @Time: 16:56
- */
 public class TimeClient {
     public void connect(String host,int port)throws Exception{
         // 配置服务端的NIO线程组
         EventLoopGroup group = new NioEventLoopGroup();
-
         try {
             // Bootstrap 类，是启动NIO服务器的辅助启动类
             Bootstrap b = new Bootstrap();
             b.group(group).channel(NioSocketChannel.class)
                     .option(ChannelOption.TCP_NODELAY,true)
                     .handler(new ChannelInitializer<SocketChannel>() {
-                        @Override
-                        public void initChannel(SocketChannel ch)
-                                throws Exception{
+                        public void initChannel(SocketChannel ch) throws Exception{
                             ch.pipeline().addLast(new TimeClientHandler());
                         }
                     });
-
             // 发起异步连接操作
             ChannelFuture f= b.connect(host,port).sync();
-
             // 等待客服端链路关闭
             f.channel().closeFuture().sync();
         }finally {

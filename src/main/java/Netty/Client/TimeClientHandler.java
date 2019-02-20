@@ -6,19 +6,9 @@ import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
 import java.util.logging.Logger;
 
-/**
- * Created by Idea 14 whih "netty"
- *
- * @Auhor: karl.zhao
- * @Email: karl.zhao@qq.com
- * @Date: 2015-11-28
- * @Time: 16:58
- */
 public class TimeClientHandler extends ChannelHandlerAdapter{
-
     // 写日志
-    private static final Logger logger =
-            Logger.getLogger(TimeClientHandler.class.getName());
+    private static final Logger logger = Logger.getLogger(TimeClientHandler.class.getName());
 
     private final ByteBuf firstMessage;
 
@@ -28,9 +18,7 @@ public class TimeClientHandler extends ChannelHandlerAdapter{
         firstMessage.writeBytes(req);
     }
 
-    @Override
-    public void channelRead(ChannelHandlerContext ctx,Object msg)
-            throws Exception{
+    public void channelRead(ChannelHandlerContext ctx,Object msg) throws Exception{
         ByteBuf buf = (ByteBuf)msg;
         byte[]req = new byte[buf.readableBytes()];
         buf.readBytes(req);
@@ -38,7 +26,6 @@ public class TimeClientHandler extends ChannelHandlerAdapter{
         System.out.println("Now is : " + body);
     }
 
-    @Override
     public void channelActive(ChannelHandlerContext ctx){
         // 当客户端和服务端建立tcp成功之后，Netty的NIO线程会调用channelActive
         // 发送查询时间的指令给服务端。
@@ -47,7 +34,6 @@ public class TimeClientHandler extends ChannelHandlerAdapter{
         ctx.writeAndFlush(firstMessage);
     }
 
-    @Override
     public void exceptionCaught(ChannelHandlerContext ctx,Throwable cause){
         logger.warning("message from:"+cause.getMessage());
         ctx.close();

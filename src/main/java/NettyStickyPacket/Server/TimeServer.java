@@ -11,14 +11,6 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.LineBasedFrameDecoder;
 import io.netty.handler.codec.string.StringDecoder;
 
-/**
- * Created by Idea 14 whih "netty"
- *
- * @Auhor: karl.zhao
- * @Email: karl.zhao@qq.com
- * @Date: 2015-11-28
- * @Time: 15:54
- */
 public class TimeServer {
     public void bind(int port)throws Exception{
         /* 配置服务端的NIO线程组 */
@@ -28,7 +20,6 @@ public class TimeServer {
         // 网络读写
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup WorkerGroup = new NioEventLoopGroup();
-
         try {
             // ServerBootstrap 类，是启动NIO服务器的辅助启动类
             ServerBootstrap b = new ServerBootstrap();
@@ -36,10 +27,8 @@ public class TimeServer {
                     .channel(NioServerSocketChannel.class)
                     .option(ChannelOption.SO_BACKLOG,1024)
                     .childHandler(new ChildChannelHandler());
-
             // 绑定端口,同步等待成功
-            ChannelFuture f= b.bind(port).sync();
-
+            ChannelFuture f = b.bind(port).sync();
             // 等待服务端监听端口关闭
             f.channel().closeFuture().sync();
         }finally {
@@ -50,7 +39,6 @@ public class TimeServer {
     }
 
     private class ChildChannelHandler extends ChannelInitializer<SocketChannel>{
-        @Override
         protected  void initChannel(SocketChannel arg0)throws Exception{
             // 增加 LineBasedFrameDecoder 和StringDecoder编码器
             arg0.pipeline().addLast(new LineBasedFrameDecoder(1024));

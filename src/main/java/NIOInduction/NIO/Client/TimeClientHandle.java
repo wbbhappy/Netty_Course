@@ -1,24 +1,14 @@
 package NIOInduction.NIO.Client;
 
-import com.sun.scenario.effect.impl.prism.PrImage;
-
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
-import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.Set;
 
-/**
- * Created by IntelliJ IDEA 14.
- * User: karl.zhao
- * Time: 2015/11/25 0025.
- */
 public class TimeClientHandle implements Runnable {
 
     private String host;
@@ -48,7 +38,6 @@ public class TimeClientHandle implements Runnable {
             e.printStackTrace();
             System.exit(1);
         }
-
         while (!stop){
             try{
                 selector.select(1000);
@@ -76,7 +65,7 @@ public class TimeClientHandle implements Runnable {
         }
 
         // 多路复用器关闭后，所有注册在上面的Channel和Pipe等资源都会被自动注册并关闭，所以不需要重新释放资源
-        if(selector!=null){
+        if(selector != null){
             try {
                 selector.close();
             }catch (IOException e){
@@ -103,12 +92,11 @@ public class TimeClientHandle implements Runnable {
                 int readBytes = sc.read(readBuffer);
                 if(readBytes>0){
                     readBuffer.flip();
-                    byte[] bytes=new byte[readBuffer.remaining()];
+                    byte[] bytes = new byte[readBuffer.remaining()];
                     readBuffer.get(bytes);
                     String body = new String(bytes,"UTF-8");
                     System.out.println("Now is : " + body);
-
-                    this.stop=true;
+                    this.stop = true;
                 }
                 else if(readBytes<0){
                     // 对端链路关闭

@@ -8,11 +8,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.Set;
 
-/**
- * Created by IntelliJ IDEA 14.
- * User: karl.zhao
- * Time: 2015/11/25 0025.
- */
 public class MultiplexerTimeServer implements Runnable{
 
     private Selector selector;
@@ -61,7 +56,6 @@ public class MultiplexerTimeServer implements Runnable{
                 T.printStackTrace();
             }
         }
-
         // 多路复用器关闭后，所有注册在上面的Channel和Pipe等资源都会被自动注册并关闭，所以不需要重新释放资源
         if(selector!=null){
             try {
@@ -80,7 +74,6 @@ public class MultiplexerTimeServer implements Runnable{
                 ServerSocketChannel ssc = (ServerSocketChannel)key.channel();
                 SocketChannel sc = ssc.accept();
                 sc.configureBlocking(false);
-
                 // Add the new connection to the selector
                 sc.register(selector,SelectionKey.OP_READ);
             }
@@ -91,11 +84,10 @@ public class MultiplexerTimeServer implements Runnable{
                 int readBytes = sc.read(readBuffer);
                 if(readBytes>0){
                     readBuffer.flip();
-                    byte[] bytes=new byte[readBuffer.remaining()];
+                    byte[] bytes = new byte[readBuffer.remaining()];
                     readBuffer.get(bytes);
                     String body = new String(bytes,"UTF-8");
                     System.out.println("recvive order : " + body);
-
                     String currentTime = "QUERY TIME ORDER".equalsIgnoreCase(body)?new Date(
                             System.currentTimeMillis()).toString()
                             :"BAD ORDER";
@@ -112,7 +104,7 @@ public class MultiplexerTimeServer implements Runnable{
     }
 
     private void doWrite(SocketChannel channel,String response)throws IOException{
-        if(response!=null&&response.trim().length()>0){
+        if(response!=null && response.trim().length()>0){
             byte[]bytes = response.getBytes();
             ByteBuffer writeBuffer = ByteBuffer.allocate(bytes.length);
             writeBuffer.put(bytes);

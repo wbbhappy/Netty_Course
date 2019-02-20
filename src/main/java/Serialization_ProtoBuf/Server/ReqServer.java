@@ -14,13 +14,7 @@ import io.netty.handler.codec.protobuf.ProtobufEncoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
 
-/**
- * Created by IntelliJ IDEA 14.
- * User: karl.zhao
- * Time: 2015/12/25 0025.
- */
 public class ReqServer {
-
     public void bind(int port)throws Exception{
         /* 配置服务端的NIO线程组 */
         // NioEventLoopGroup类 是个线程组，包含一组NIO线程，用于网络事件的处理
@@ -29,7 +23,6 @@ public class ReqServer {
         // 网络读写
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup WorkerGroup = new NioEventLoopGroup();
-
         try {
             // ServerBootstrap 类，是启动NIO服务器的辅助启动类
             ServerBootstrap b = new ServerBootstrap();
@@ -37,30 +30,23 @@ public class ReqServer {
                     .channel(NioServerSocketChannel.class)
                     .option(ChannelOption.SO_BACKLOG,1024)
                     .childHandler(new ChannelInitializer<SocketChannel>() {
-                        @Override
                         public void initChannel(SocketChannel ch){
                             // protobufDecoder仅仅负责编码，并不支持读半包，所以在之前，一定要有读半包的处理器。
                             // 有三种方式可以选择：
                             // 使用netty提供ProtobufVarint32FrameDecoder
                             // 继承netty提供的通用半包处理器 LengthFieldBasedFrameDecoder
                             // 继承ByteToMessageDecoder类，自己处理半包
-
                             // 半包的处理
                             ch.pipeline().addLast(new ProtobufVarint32FrameDecoder());
                             // 需要解码的目标类
                             ch.pipeline().addLast(new ProtobufDecoder(PersonProbuf.Person.getDefaultInstance()));
-
                             ch.pipeline().addLast(new ProtobufVarint32LengthFieldPrepender());
-
                             ch.pipeline().addLast(new ProtobufEncoder());
-
                             ch.pipeline().addLast(new ReqServerHandler());
                         }
                     });
-
             // 绑定端口,同步等待成功
-            ChannelFuture f= b.bind(port).sync();
-
+            ChannelFuture f = b.bind(port).sync();
             // 等待服务端监听端口关闭
             f.channel().closeFuture().sync();
         }finally {
@@ -80,5 +66,4 @@ public class ReqServer {
         }
         new ReqServer().bind(port);
     }
-
 }
